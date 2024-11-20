@@ -303,7 +303,7 @@ SEXP glue(SEXP x, SEXP env)
     return out;
 }
 
-SEXP glue_free()
+SEXP glue_free(void)
 {
     if (str != NULL)
     {
