@@ -143,8 +143,11 @@ behaviours) <code>.comment</code>, <code>.literal</code> and
 <pre><code><span><span class="co">## [1] "Item A" "Item B" "Item C" "Item D" "Item E" "Item F"</span></span></code></pre>
 <p>But not over input strings (yet)</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/glue.html">glue</a></span><span class="op">(</span><span class="va">letters</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Error in glue(letters): `x` must be a character vector of length &lt;= 1.</span></span></code></pre>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="../reference/glue.html">glue</a></span><span class="op">(</span><span class="va">letters</span><span class="op">)</span>,</span>
+<span>    error <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">conditionMessage</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] "`x` must be a character vector of length &lt;= 1."</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -170,9 +173,9 @@ behaviours) <code>.comment</code>, <code>.literal</code> and
 <pre><code><span><span class="co">## Unit: relative</span></span>
 <span><span class="co">##     expr       min        lq      mean    median        uq        max neval</span></span>
 <span><span class="co">##  sprintf  1.000000  1.000000  1.000000  1.000000  1.000000  1.0000000   100</span></span>
-<span><span class="co">##   paste0  2.847909  2.483111  1.805136  1.678727  1.717254  0.3617783   100</span></span>
-<span><span class="co">##    super  9.514259  8.421053  6.497863  6.363100  5.835140  3.8571656   100</span></span>
-<span><span class="co">##     glue 84.491445 71.609976 49.409075 47.165255 42.285456 13.2855098   100</span></span></code></pre>
+<span><span class="co">##   paste0  2.839925  2.527308  1.836329  1.683049  1.789630  0.3086444   100</span></span>
+<span><span class="co">##    super  9.810734  8.680157  6.616491  6.423771  6.082686  3.8124959   100</span></span>
+<span><span class="co">##     glue 85.196798 72.780354 49.459336 47.073972 43.397670 12.5700178   100</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="data-frame-input">Data frame input<a class="anchor" aria-label="anchor" href="#data-frame-input"></a>
@@ -191,9 +194,9 @@ behaviours) <code>.comment</code>, <code>.literal</code> and
 <pre><code><span><span class="co">## Unit: relative</span></span>
 <span><span class="co">##     expr       min        lq      mean    median        uq       max neval</span></span>
 <span><span class="co">##  sprintf  1.000000  1.000000  1.000000  1.000000  1.000000  1.000000   100</span></span>
-<span><span class="co">##   paste0  1.663306  1.612626  1.567282  1.526552  1.438613  3.555329   100</span></span>
-<span><span class="co">##    super  2.850504  2.823461  2.745434  2.913276  2.617085  2.448562   100</span></span>
-<span><span class="co">##     glue 19.185299 18.375418 16.556999 16.675230 14.874329 17.193252   100</span></span></code></pre>
+<span><span class="co">##   paste0  1.636848  1.602644  1.555155  1.528677  1.431333  2.454490   100</span></span>
+<span><span class="co">##    super  2.943516  2.846574  2.681556  2.908811  2.572647  1.537183   100</span></span>
+<span><span class="co">##     glue 19.603430 18.366401 16.246234 16.688740 14.547217 10.842833   100</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="trimmed-output-1">Trimmed output<a class="anchor" aria-label="anchor" href="#trimmed-output-1"></a>
@@ -216,7 +219,7 @@ behaviours) <code>.comment</code>, <code>.literal</code> and
 <pre><code><span><span class="co">## Unit: relative</span></span>
 <span><span class="co">##   expr      min       lq     mean   median       uq      max neval</span></span>
 <span><span class="co">##  super 1.000000 1.000000 1.000000 1.000000 1.000000 1.000000   100</span></span>
-<span><span class="co">##   glue 3.749944 3.697919 3.575423 3.588069 3.554912 1.760713   100</span></span></code></pre>
+<span><span class="co">##   glue 3.829421 3.699996 3.589724 3.597093 3.621335 1.757523   100</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="vectorized-performance">Vectorized performance<a class="anchor" aria-label="anchor" href="#vectorized-performance"></a>
@@ -232,11 +235,11 @@ behaviours) <code>.comment</code>, <code>.literal</code> and
 <span>    check   <span class="op">=</span> <span class="st">"identical"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Unit: relative</span></span>
-<span><span class="co">##     expr      min       lq     mean   median       uq      max neval</span></span>
-<span><span class="co">##  sprintf 1.489195 1.478523 1.470150 1.462711 1.447963 1.596989   100</span></span>
-<span><span class="co">##   paste0 1.000000 1.000000 1.000000 1.000000 1.000000 1.000000   100</span></span>
-<span><span class="co">##    super 1.001374 1.006108 1.006896 1.011319 1.002009 1.106243   100</span></span>
-<span><span class="co">##     glue 1.052445 1.047234 1.051495 1.036734 1.031724 1.131515   100</span></span></code></pre>
+<span><span class="co">##     expr      min       lq     mean   median       uq       max neval</span></span>
+<span><span class="co">##  sprintf 1.515219 1.491733 1.481768 1.471056 1.470214 1.4489158   100</span></span>
+<span><span class="co">##   paste0 1.000000 1.000000 1.000000 1.000000 1.000000 1.0000000   100</span></span>
+<span><span class="co">##    super 1.001219 1.003483 1.005976 1.002883 1.003300 0.9968706   100</span></span>
+<span><span class="co">##     glue 1.070956 1.055485 1.059997 1.040508 1.054012 1.0612620   100</span></span></code></pre>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
