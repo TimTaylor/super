@@ -89,8 +89,10 @@ head(glue("Item {LETTERS}"))
 But not over input strings (yet)
 
 ```{r}
-#| error = TRUE
-glue(letters)
+tryCatch(
+    glue(letters),
+    error = function(e) conditionMessage(e)
+)
 ```
 
 
