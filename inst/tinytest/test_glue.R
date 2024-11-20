@@ -124,9 +124,9 @@ expect_equal(Encoding(glue("{x}{y}")), "UTF-8")
 
 os <- tolower(Sys.info()[["sysname"]])
 if (!os %in% c("darwin", "linux")) {
-    old <- Sys.getlocale("LC_TYPE")
-    on.exit(Sys.setlocale("LC_TYPE", old)) # In case test interrupted
-    Sys.setlocale("LC_TYPE", "Chinese (Simplified)_China.936")
+    old <- Sys.getlocale("LC_CTYPE")
+    on.exit(Sys.setlocale("LC_CTYPE", old)) # In case test interrupted
+    Sys.setlocale("LC_CTYPE", "Chinese (Simplified)_China.936")
     z <- format(as.Date("2018-01-04"), "%Y\U5E74")
     z_out <- glue(z)
     expect_equal(Encoding(z_out), "UTF-8")
