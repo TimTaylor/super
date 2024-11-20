@@ -10,3 +10,6 @@ script.R
 /revdep/*noindex
 /docs/
 internal/
+compile_commands.json
+.cache
+docs

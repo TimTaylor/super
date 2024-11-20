@@ -1,220 +1,314 @@
-#define STRICT_R_HEADERS
-#define R_NO_REMAP
-#include "Rinternals.h"
+/* --------------------------------------------------------------------------
+ * Forked from glue at:
+ *
+ * Version: 1.8.0.9000;
+ * Commit: a3f80d678274ef634c10c2cb094c939b1543222a;
+ * URL: https://github.com/tidyverse/glue/commit/a3f80d678274ef634c10c2cb094c939b1543222a
+ *
+ * -------------------------------------------------------------------------- */
+
+/* --------------------------------------------------------------------------
+ * # MIT License
+ *
+ * Copyright (c) 2023 glue authors
+ * Copyright (c) 2024 super authors
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * -------------------------------------------------------------------------- */
+
+#include <assert.h>    /* for static_assert */
+#include <stdbool.h>
 #include <stdlib.h>
-#include <string.h>
+#include <string.h>  /* for strlen, strncmp */
 
-SEXP set(SEXP x, int i, SEXP val) {
-  R_xlen_t len = Rf_xlength(x);
-  if (i >= len) {
-    len *= 2;
-    x = Rf_lengthgets(x, len);
-  }
-  SET_VECTOR_ELT(x, i, val);
-  return x;
+#define R_NO_REMAP
+#include <R.h>
+#include <Rinternals.h>
+#include <Rversion.h>
+
+/*
+ * Note: The code now relies on the delimiters being of length 1 and not identical:
+ *       We can enforce the length restriction at compile time and do so below.
+ *       The equality check is done visually (although with C23 we could maybe
+ *       use a constrexpr). R test would alert us to this issue anyway.
+ */
+
+#define DELIM_OPEN "{"
+#define DELIM_CLOSE "}"
+
+static_assert(sizeof(DELIM_OPEN) == sizeof(DELIM_CLOSE), "");
+static_assert(sizeof(DELIM_OPEN) == 2, "");
+
+/*
+ * Note: We use a static variable as the R_getVar function in 4.5.0 will error
+ *       if it cannot find the variable in the environment. We must then use
+ *       an on.exit function to clean up on error/user interrupt.
+ */
+static char* str;
+
+/*
+ * Note: It looks like R 4.5.0 will gain a useful function R_getVar. This is a
+ *       slight variation on that function that should keep things working in
+ *       earlier releases. The only difference a user should see is a slight
+ *       change in error messages.
+ */
+#if R_VERSION < R_Version(4, 5, 0)
+static SEXP R_getVar(SEXP sym, SEXP rho, Rboolean inherits)
+{
+    if (TYPEOF(sym) != SYMSXP)
+    {
+        Rf_error("first argument to '%s' must be a symbol (line %d of %s).\n", __func__, __LINE__, __FILE__);
+    }
+
+    if (TYPEOF(rho) != ENVSXP)
+    {
+        Rf_error("second argument to '%s' must be an environment (line %d of %s).\n", __func__, __LINE__, __FILE__);
+    }
+
+    if (!inherits)
+    {
+        Rf_error("Backport error in %s() (line %d of %s).\n", __func__, __LINE__, __FILE__);
+    }
+
+    SEXP val = Rf_findVar(sym, rho);
+    if (val == R_MissingArg)
+    {
+        Rf_error("Backport error in %s() (line %d of %s).\n", __func__, __LINE__, __FILE__);
+    }
+    else if (val == R_UnboundValue)
+    {
+        Rf_error("object '%s' not found", Rf_translateCharUTF8(PRINTNAME(sym)));
+    }
+    else if (TYPEOF(val) == PROMSXP)
+    {
+	    PROTECT(val);
+	    val = Rf_eval(val, rho);
+	    UNPROTECT(1);
+    }
+    return val;
+}
+#endif
+
+/*
+ * Note: I added an additional PROTECT as I'm unsure if SET_VECTOR_ELT() could
+ *       trigger gc. Need to look in to this at some point.
+ */
+static SEXP set(SEXP x, int i, SEXP val) {
+    int protected = 0;
+    R_xlen_t len = Rf_xlength(x);
+    if (i >= len)
+    {
+        len *= 2;
+        x = PROTECT(Rf_xlengthgets(x, len)); protected++;
+    }
+    SET_VECTOR_ELT(x, i, val);
+    UNPROTECT(protected);
+    return x;
 }
 
-SEXP resize(SEXP out, R_xlen_t n) {
-  if (n == Rf_xlength(out)) {
-    return out;
-  }
-  return Rf_xlengthgets(out, n);
+static SEXP resize(SEXP out, R_xlen_t n)
+{
+    if (n == Rf_xlength(out))
+    {
+        return out;
+    }
+    return Rf_xlengthgets(out, n);
 }
 
-SEXP glue_(
-    SEXP x,
-    SEXP f,
-    SEXP open_arg,
-    SEXP close_arg,
-    SEXP comment_arg,
-    SEXP literal_arg) {
-  typedef enum {
-    text,
-    escape,
-    single_quote,
-    double_quote,
-    backtick,
-    delim,
-    comment
-  } states;
+SEXP glue(SEXP x, SEXP env)
+{
+    str = NULL;
+    enum state {TEXT, ESCAPE, SINGLE_QUOTE, DOUBLE_QUOTE, BACKTICK, DELIM};
 
-  const char* xx = Rf_translateCharUTF8(STRING_ELT(x, 0));
-  size_t str_len = strlen(xx);
+    const char* xx = Rf_translateCharUTF8(STRING_ELT(x, 0));
+    size_t str_len = strlen(xx);
+    str = (char*) R_Calloc(str_len + 1, char);
 
-  char* str = (char*)malloc(str_len + 1);
+    SEXP out = Rf_allocVector(VECSXP, 1);
+    PROTECT_INDEX out_idx;
+    PROTECT_WITH_INDEX(out, &out_idx);
 
-  const char* open = CHAR(STRING_ELT(open_arg, 0));
-  size_t open_len = strlen(open);
+    size_t j = 0;
+    size_t k = 0;
+    int delim_level = 0;
+    size_t start = 0;
+    enum state state = TEXT;
+    enum state prev_state = TEXT;
+    for (size_t i = 0; i < str_len; ++i)
+    {
+        switch (state)
+        {
+            case TEXT:
+                if (strncmp(&xx[i], DELIM_OPEN, 1) == 0)
+                {
+                    /* check for open delim doubled */
+                    if (strncmp(&xx[i + 1], DELIM_OPEN, 1) == 0)
+                    {
+                        i++;
+                    }
+                    else
+                    {
+                        state = DELIM;
+                        delim_level = 1;
+                        start = i + 1;
+                        break;
+                    }
+                }
+                if (strncmp(&xx[i], DELIM_CLOSE, 1) == 0 && strncmp(&xx[i + 1], DELIM_CLOSE, 1) == 0)
+                {
+                    i++;
+                }
+                str[j++] = xx[i];
+                break;
 
-  const char* close = CHAR(STRING_ELT(close_arg, 0));
-  size_t close_len = strlen(close);
+        case ESCAPE:
+            state = prev_state;
+            break;
 
-  char comment_char = '\0';
-  if (Rf_xlength(comment_arg) > 0) {
-    comment_char = CHAR(STRING_ELT(comment_arg, 0))[0];
-  }
-
-  Rboolean literal = LOGICAL(literal_arg)[0];
-
-  int delim_equal = strncmp(open, close, open_len) == 0;
-
-  SEXP out = Rf_allocVector(VECSXP, 1);
-  PROTECT_INDEX out_idx;
-  PROTECT_WITH_INDEX(out, &out_idx);
-
-  size_t j = 0;
-  size_t k = 0;
-  int delim_level = 0;
-  size_t start = 0;
-  states state = text;
-  states prev_state = text;
-  size_t i = 0;
-  for (i = 0; i < str_len; ++i) {
-    switch (state) {
-    case text: {
-      if (strncmp(&xx[i], open, open_len) == 0) {
-        /* check for open delim doubled */
-        if (strncmp(&xx[i + open_len], open, open_len) == 0) {
-          i += open_len;
-        } else {
-          state = delim;
-          delim_level = 1;
-          start = i + open_len;
-          break;
-        }
-      }
-      if (strncmp(&xx[i], close, close_len) == 0 &&
-          strncmp(&xx[i + close_len], close, close_len) == 0) {
-        i += close_len;
-      }
-
-      str[j++] = xx[i];
-      break;
-    }
-    case escape: {
-      state = prev_state;
-      break;
-    }
-    case single_quote: {
-      if (xx[i] == '\\') {
-        prev_state = single_quote;
-        state = escape;
-      } else if (xx[i] == '\'') {
-        state = delim;
-      }
-      break;
-    }
-    case double_quote: {
-      if (xx[i] == '\\') {
-        prev_state = double_quote;
-        state = escape;
-      } else if (xx[i] == '\"') {
-        state = delim;
-      }
-      break;
-    }
-    case backtick: {
-      if (xx[i] == '\\') {
-        prev_state = backtick;
-        state = escape;
-      } else if (xx[i] == '`') {
-        state = delim;
-      }
-      break;
-    }
-    case comment: {
-      if (xx[i] == '\n') {
-        state = delim;
-      }
-      break;
-    }
-    case delim: {
-      if (!delim_equal && strncmp(&xx[i], open, open_len) == 0) {
-        ++delim_level;
-        i += open_len - 1;
-      } else if (strncmp(&xx[i], close, close_len) == 0) {
-        --delim_level;
-        i += close_len - 1;
-      } else {
-        if (!literal && xx[i] == comment_char) {
-          state = comment;
-        } else {
-          switch (xx[i]) {
-          case '\'':
-            if (!literal) {
-              state = single_quote;
+        case SINGLE_QUOTE:
+            if (xx[i] == '\\')
+            {
+                prev_state = SINGLE_QUOTE;
+                state = ESCAPE;
+            }
+            else if (xx[i] == '\'')
+            {
+                state = DELIM;
             }
             break;
-          case '"':
-            if (!literal) {
-              state = double_quote;
+
+        case DOUBLE_QUOTE:
+            if (xx[i] == '\\')
+            {
+                prev_state = DOUBLE_QUOTE;
+                state = ESCAPE;
+            }
+            else if (xx[i] == '\"')
+            {
+                state = DELIM;
             }
             break;
-          case '`':
-            if (!literal) {
-              state = backtick;
+
+        case BACKTICK:
+            if (xx[i] == '\\')
+            {
+                prev_state = BACKTICK;
+                state = ESCAPE;
+            }
+            else if (xx[i] == '`')
+            {
+                state = DELIM;
             }
             break;
-          };
-        }
-      }
-      if (delim_level == 0) {
-        /* Result of the current glue statement */
-        SEXP expr = PROTECT(Rf_ScalarString(
-            Rf_mkCharLenCE(&xx[start], (i - close_len) + 1 - start, CE_UTF8)));
-        SEXP call = PROTECT(Rf_lang2(f, expr));
-        SEXP result = PROTECT(Rf_eval(call, R_EmptyEnv));
 
-        /* text in between last glue statement */
-        if (j > 0) {
-          str[j] = '\0';
-          SEXP str_ = PROTECT(Rf_ScalarString(Rf_mkCharLenCE(str, j, CE_UTF8)));
-          REPROTECT(out = set(out, k++, str_), out_idx);
-          UNPROTECT(1);
-        }
+        case DELIM:
+            if (strncmp(&xx[i], DELIM_OPEN, 1) == 0)
+            {
+                ++delim_level;
+            }
+            else if (strncmp(&xx[i], DELIM_CLOSE, 1) == 0)
+            {
+                --delim_level;
+            }
+            else
+            {
 
-        REPROTECT(out = set(out, k++, result), out_idx);
+                switch (xx[i])
+                {
+                    case '\'':
+                        state = SINGLE_QUOTE;
+                        break;
 
-        /* Clear the string buffer */
-        memset(str, 0, j);
-        j = 0;
-        UNPROTECT(3);
-        state = text;
-      }
-      break;
+                    case '"':
+                        state = DOUBLE_QUOTE;
+                        break;
+
+                    case '`':
+                        state = BACKTICK;
+                        break;
+                };
+            }
+
+            if (delim_level == 0)
+            {
+                /* Get the current glue statement */
+                SEXP expr = PROTECT(Rf_ScalarString(Rf_mkCharLenCE(&xx[start], i - start, CE_UTF8)));
+                SEXP result = PROTECT(R_getVar(Rf_installChar(STRING_ELT(expr, 0)), env, TRUE));
+
+                /* text in between last glue statement */
+                if (j > 0)
+                {
+                    str[j] = '\0';
+                    SEXP str_ = PROTECT(Rf_ScalarString(Rf_mkCharLenCE(str, j, CE_UTF8)));
+                    REPROTECT(out = set(out, k++, str_), out_idx);
+                    UNPROTECT(1);
+                }
+
+                REPROTECT(out = set(out, k++, result), out_idx);
+
+                /* Clear the string buffer */
+                memset(str, 0, j);
+                j = 0;
+                UNPROTECT(2);
+                state = TEXT;
+            }
+            break;
+        };
     }
-    };
-  }
 
-  if (k == 0 || j > 0) {
-    str[j] = '\0';
-    SEXP str_ = PROTECT(Rf_ScalarString(Rf_mkCharLenCE(str, j, CE_UTF8)));
-    REPROTECT(out = set(out, k++, str_), out_idx);
+    if (k == 0 || j > 0) {
+        str[j] = '\0';
+        SEXP str_ = PROTECT(Rf_ScalarString(Rf_mkCharLenCE(str, j, CE_UTF8)));
+        REPROTECT(out = set(out, k++, str_), out_idx);
+        UNPROTECT(1);
+    }
+
+    if (state == DELIM)
+    {
+       Rf_error("Expecting '%s'", DELIM_CLOSE);
+    }
+    else if (state == SINGLE_QUOTE)
+    {
+        Rf_error("Unterminated quote (')");
+    }
+    else if (state == DOUBLE_QUOTE)
+    {
+        Rf_error("Unterminated quote (\")");
+    }
+    else if (state == BACKTICK)
+    {
+        Rf_error("Unterminated quote (`)");
+    }
+
+    out = resize(out, k);
+
     UNPROTECT(1);
-  }
 
-  if (state == delim) {
-    free(str);
-    Rf_error("Expecting '%s'", close);
-  } else if (state == single_quote) {
-    free(str);
-    Rf_error("Unterminated quote (')");
-  } else if (state == double_quote) {
-    free(str);
-    Rf_error("Unterminated quote (\")");
-  } else if (state == backtick) {
-    free(str);
-    Rf_error("Unterminated quote (`)");
-  } else if (state == comment) {
-    free(str);
-    Rf_error("A '#' comment in a glue expression must terminate with a newline.");
-  }
+    return out;
+}
 
-  free(str);
-
-  out = resize(out, k);
-
-  UNPROTECT(1);
-
-  return out;
+SEXP glue_free()
+{
+    if (str != NULL)
+    {
+        R_Free(str);
+    }
+    str = NULL;
+    return R_NilValue;
 }

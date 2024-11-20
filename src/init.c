@@ -1,24 +1,24 @@
 #include <R.h>
-#include <R_ext/Rdynload.h>
 #include <Rinternals.h>
 #include <stdlib.h> // for NULL
-
-// Compile with `C_VISIBILITY = -fvisibility=hidden` if you link to
-// this library
-#include <R_ext/Visibility.h>
-#define export attribute_visible extern
+#include <R_ext/Rdynload.h>
 
 /* .Call calls */
-extern SEXP glue_(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP trim_(SEXP);
+extern SEXP glue(SEXP, SEXP);
+extern SEXP glue_free(void);
+extern SEXP trim(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
-    {"glue_", (DL_FUNC)&glue_, 6},
-    {"trim_", (DL_FUNC)&trim_, 1},
-    {NULL, NULL, 0}};
+    {"glue",      (DL_FUNC) &glue,      2},
+    {"glue_free", (DL_FUNC) &glue_free, 0},
+    {"trim",      (DL_FUNC) &trim,      1},
+    {NULL, NULL, 0}
+};
 
-export
-void R_init_glue(DllInfo* dll) {
-  R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
-  R_useDynamicSymbols(dll, FALSE);
+void R_init_super(DllInfo *dll)
+{
+    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
+    R_useDynamicSymbols(dll, FALSE);
+    R_forceSymbols(dll, TRUE);
 }
+

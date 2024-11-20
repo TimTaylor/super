@@ -22,3 +22,5 @@
 ^internal$
 ^CRAN-SUBMISSION$
 ^vignettes/articles$
+^compile_commands\.json$
+^\.cache$
