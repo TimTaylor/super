@@ -131,6 +131,7 @@ if (!os %in% c("darwin", "linux")) {
     z_out <- glue(z)
     expect_equal(Encoding(z_out), "UTF-8")
     expect_equal(z_out, "2018\U5E74")
+    Sys.setlocale("LC_CTYPE", old)
 }
 
 # glue drops any NULL input
