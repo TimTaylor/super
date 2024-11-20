@@ -2,6 +2,9 @@
 # Errors ------------------------------------------------------------------
 # -------------------------------------------------------------------------
 
+# glue errors with input length > 1
+expect_error(glue(letters), "`x` must be a character vector of length <= 1.")
+
 # glue errors with invalid second argument
 expect_error(glue("test", "a"), "must be an environment")
 
@@ -11,7 +14,7 @@ expect_error(glue("{NoTfOuNd}"), "object .* not found")
 # glue errors if invalid format
 expect_error(glue("x={x"), "Expecting '}'")
 
-# throws informative error if interpolating a function
+# glue throws informative error if interpolating a function
 expect_error(glue("{cat}"), "cannot interpolate functions into strings.")
 
 # unterminated quotes are an error
@@ -22,10 +25,25 @@ expect_error(glue("{this doesn`t work}"), "Unterminated quote")
 # glue does not execute code
 expect_error(glue("{1+1}"), "object '1\\+1' not found")
 
+# glut errors with input length > 1
+expect_error(glut(letters), "`x` must be a character vector of length <= 1.")
+
+# glut errors with invalid second argument
+expect_error(glut("test", "a"), "must be an environment")
+
+# glut throws informative error if interpolating a function
+expect_error(glut("{cat}"), "cannot interpolate functions into strings.")
+
 
 # -------------------------------------------------------------------------
 # Implementation ----------------------------------------------------------
 # -------------------------------------------------------------------------
+
+# character(0) input returns character(0)
+expect_identical(glue(character(0L)), character(0L))
+
+# glue returns length 1 string from length 1 input
+expect_identical(glue(""), "")
 
 # glue returns length 1 string from length 1 input
 expect_identical(glue(""), "")
@@ -128,6 +146,14 @@ expect_identical(f("{x}"), "1")
 f <- function(msg) glue(msg, env = parent.frame())
 expect_identical(lapply(1:2, function(x) f("{x}")), list("1", "2"))
 
+# glue works with list input
+name <- "Fred"
+res <- glue(
+    'My name is {name}, my age next year is {age} and a dot is a {.}',
+    list(name = "Joe", age = 40, . = "'.'")
+)
+expect_identical(res, "My name is Joe, my age next year is 40 and a dot is a '.'")
+
 # glut works with list input
 name <- "Fred"
 res <- glut(
@@ -152,3 +178,6 @@ expect_identical(
  c3
 B"
 )
+
+# character(0) input returns character(0)
+expect_identical(glut(character(0L)), character(0L))
