@@ -123,7 +123,7 @@ expect_identical(glue("{x}{y}"), xy_out)
 expect_equal(Encoding(glue("{x}{y}")), "UTF-8")
 
 os <- tolower(Sys.info()[["sysname"]])
-if (!os %in% c("mac", "linux")) {
+if (!os %in% c("darwin", "linux")) {
     old <- Sys.getlocale("LC_TYPE")
     on.exit(Sys.setlocale("LC_TYPE", old)) # In case test interrupted
     Sys.setlocale("LC_TYPE", "Chinese (Simplified)_China.936")
