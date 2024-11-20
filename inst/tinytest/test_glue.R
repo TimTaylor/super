@@ -122,8 +122,8 @@ xy_out <- paste0(x_out, y_out)
 expect_identical(glue("{x}{y}"), xy_out)
 expect_equal(Encoding(glue("{x}{y}")), "UTF-8")
 
-os <- tolower(Sys.info()[["sysname"]])
-if (!os %in% c("darwin", "linux")) {
+
+encoding_test <- function() {
     old <- Sys.getlocale("LC_CTYPE")
     on.exit(Sys.setlocale("LC_CTYPE", old)) # In case test interrupted
     Sys.setlocale("LC_CTYPE", "Chinese (Simplified)_China.936")
@@ -131,7 +131,10 @@ if (!os %in% c("darwin", "linux")) {
     z_out <- glue(z)
     expect_equal(Encoding(z_out), "UTF-8")
     expect_equal(z_out, "2018\U5E74")
-    Sys.setlocale("LC_CTYPE", old)
+}
+os <- tolower(Sys.info()[["sysname"]])
+if (!os %in% c("darwin", "linux")) {
+    encoding_test()
 }
 
 # glue drops any NULL input
