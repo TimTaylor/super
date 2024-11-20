@@ -47,7 +47,7 @@
 #' @export
 trim <- function(x) {
     if (!is.character(x))
-        stop("`x` must be a character.")
+        stop("`x` must be a character vector.")
 
     has_newline <- function(x) any(grepl("\\n", x))
 
