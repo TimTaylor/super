@@ -28,8 +28,8 @@ The development version can be installed from r-universe with:
 
 ``` r
 install.packages(
-    "super",
-    repos = c("https://tim.r-universe.dev", "https://cloud.r-project.org")
+    'super',
+    repos = c('https://timtaylor.r-universe.dev', 'https://cloud.r-project.org')
 )
 ```
 
