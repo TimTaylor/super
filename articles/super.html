@@ -71,10 +71,10 @@ string that is used as a template and an environment to look up the
 embraced inputs. There is no option to change the delimiters from being
 a pair of braces (e.g. <a href="https://github.com/christopherkenny/name" class="external-link">name</a>).</p></li>
 <li><p>Embraced inputs are always looked up in the provided environment
-(akin to calling [get()]) and are not evaluated. This is similar to
-<code><a href="https://glue.tidyverse.org/reference/glue_safe.html" class="external-link">glue::glue_safe()</a></code> and <code><a href="https://glue.tidyverse.org/reference/glue_safe.html" class="external-link">glue::glue_data_safe()</a></code>
-but note that this is not the default behaviour of
-<code><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue::glue()</a></code>.</p></li>
+(akin to calling <code><a href="https://rdrr.io/r/base/get.html" class="external-link">get()</a></code>) and are not evaluated. This is
+similar to <code><a href="https://glue.tidyverse.org/reference/glue_safe.html" class="external-link">glue::glue_safe()</a></code> and
+<code><a href="https://glue.tidyverse.org/reference/glue_safe.html" class="external-link">glue::glue_data_safe()</a></code> but note that this is not the
+default behaviour of <code><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue::glue()</a></code>.</p></li>
 <li><p><code><a href="../reference/glue.html">super::glue()</a></code> does not trim inputs. Instead this is
 done by either the function <code><a href="../reference/glue.html">super::glut()</a></code> or explicitly by
 <code>glue(trim(x))</code>.</p></li>
@@ -173,9 +173,9 @@ behaviours) <code>.comment</code>, <code>.literal</code> and
 <pre><code><span><span class="co">## Unit: relative</span></span>
 <span><span class="co">##     expr       min        lq      mean    median        uq        max neval</span></span>
 <span><span class="co">##  sprintf  1.000000  1.000000  1.000000  1.000000  1.000000  1.0000000   100</span></span>
-<span><span class="co">##   paste0  2.820151  2.496870  1.800416  1.642929  1.748302  0.3317138   100</span></span>
-<span><span class="co">##    super  9.650659  8.450704  6.475350  6.280592  5.909914  3.6112307   100</span></span>
-<span><span class="co">##     glue 84.045198 71.636541 48.964755 46.578987 42.496605 12.5464705   100</span></span></code></pre>
+<span><span class="co">##   paste0  2.766187  2.433898  1.737385  1.595057  1.642582  0.2613623   100</span></span>
+<span><span class="co">##    super  9.225719  8.210923  6.352389  6.133080  5.821077  3.5326998   100</span></span>
+<span><span class="co">##     glue 81.644784 69.682109 47.335425 44.562738 40.809320 11.8554480   100</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="data-frame-input">Data frame input<a class="anchor" aria-label="anchor" href="#data-frame-input"></a>
@@ -194,9 +194,9 @@ behaviours) <code>.comment</code>, <code>.literal</code> and
 <pre><code><span><span class="co">## Unit: relative</span></span>
 <span><span class="co">##     expr       min        lq      mean    median        uq       max neval</span></span>
 <span><span class="co">##  sprintf  1.000000  1.000000  1.000000  1.000000  1.000000  1.000000   100</span></span>
-<span><span class="co">##   paste0  1.633154  1.598838  1.537468  1.505454  1.414891  3.455298   100</span></span>
-<span><span class="co">##    super  2.785994  2.849936  2.717526  2.925477  2.575184  2.315405   100</span></span>
-<span><span class="co">##     glue 19.397065 18.491322 16.678667 16.911096 14.859347 16.894951   100</span></span></code></pre>
+<span><span class="co">##   paste0  1.637513  1.580780  1.537955  1.536265  1.429520  3.451325   100</span></span>
+<span><span class="co">##    super  2.895340  2.851802  2.779678  2.933439  2.596622  2.571657   100</span></span>
+<span><span class="co">##     glue 19.566221 18.427588 16.571282 16.808112 14.705375 15.723722   100</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="trimmed-output-1">Trimmed output<a class="anchor" aria-label="anchor" href="#trimmed-output-1"></a>
@@ -219,11 +219,15 @@ behaviours) <code>.comment</code>, <code>.literal</code> and
 <pre><code><span><span class="co">## Unit: relative</span></span>
 <span><span class="co">##   expr      min       lq     mean   median       uq      max neval</span></span>
 <span><span class="co">##  super 1.000000 1.000000 1.000000 1.000000 1.000000 1.000000   100</span></span>
-<span><span class="co">##   glue 3.860466 3.730922 3.603182 3.620857 3.574748 1.774472   100</span></span></code></pre>
+<span><span class="co">##   glue 3.826451 3.737451 3.561476 3.599441 3.593523 1.766865   100</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="vectorized-performance">Vectorized performance<a class="anchor" aria-label="anchor" href="#vectorized-performance"></a>
 </h3>
+<p>For larger input with both <code><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue::glue()</a></code> and
+<code><a href="../reference/glue.html">super::glue()</a></code>, the performance becomes dominated by the
+internally constructed call to <code><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0()</a></code>, hence the
+convergence observed below.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bar</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"baz"</span>, <span class="fl">1e5</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/microbenchmark/man/microbenchmark.html" class="external-link">microbenchmark</a></span><span class="op">(</span></span>
@@ -235,11 +239,11 @@ behaviours) <code>.comment</code>, <code>.literal</code> and
 <span>    check   <span class="op">=</span> <span class="st">"identical"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Unit: relative</span></span>
-<span><span class="co">##     expr      min       lq     mean   median       uq      max neval</span></span>
-<span><span class="co">##  sprintf 1.514826 1.517336 1.496242 1.484163 1.474331 1.584444   100</span></span>
-<span><span class="co">##   paste0 1.000000 1.000000 1.000000 1.000000 1.000000 1.000000   100</span></span>
-<span><span class="co">##    super 1.001167 1.003348 1.008944 1.009942 1.004367 1.055043   100</span></span>
-<span><span class="co">##     glue 1.057508 1.057949 1.054969 1.037277 1.038297 1.091582   100</span></span></code></pre>
+<span><span class="co">##     expr      min       lq      mean   median       uq       max neval</span></span>
+<span><span class="co">##  sprintf 1.492140 1.480040 1.5310999 1.533847 1.591611 1.3594720   100</span></span>
+<span><span class="co">##   paste0 1.000000 1.000000 1.0000000 1.000000 1.000000 1.0000000   100</span></span>
+<span><span class="co">##    super 1.017640 1.003179 0.9997333 1.008793 1.002130 0.6851493   100</span></span>
+<span><span class="co">##     glue 1.086468 1.055965 1.0667281 1.046592 1.056222 0.9904715   100</span></span></code></pre>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
