@@ -28,8 +28,8 @@ Authors@R:
         )
   )
 Description: An implementation of interpreted string literals. Based on the
-  glue package (<https://glue.tidyverse.org/>) but with a focus on efficiency
-  and simplicity at a cost of flexibility.
+  'glue' package by Hester & Bryan (2024) <doi:10.32614/CRAN.package.glue> but
+  with a focus on efficiency and simplicity at a cost of flexibility.
 License: MIT + file LICENSE
 BugReports: https://github.com/TimTaylor/super/issues
 Depends: 

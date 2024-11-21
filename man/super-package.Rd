@@ -6,7 +6,7 @@
 \alias{super-package}
 \title{super: Interpreted String Literals}
 \description{
-An implementation of interpreted string literals. Based on the glue package (\url{https://glue.tidyverse.org/}) but with a focus on efficiency and simplicity at a cost of flexibility.
+An implementation of interpreted string literals. Based on the 'glue' package by Hester & Bryan (2024) \doi{10.32614/CRAN.package.glue} but with a focus on efficiency and simplicity at a cost of flexibility.
 }
 \seealso{
 Useful links:
