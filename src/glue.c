@@ -134,7 +134,7 @@ static SEXP resize(SEXP out, R_xlen_t n)
 SEXP glue(SEXP x, SEXP env)
 {
     str = NULL;
-    enum state {TEXT, ESCAPE, SINGLE_QUOTE, DOUBLE_QUOTE, BACKTICK, DELIM};
+    enum state {TEXT, ESCAPE, DELIM};
 
     const char* xx = Rf_translateCharUTF8(STRING_ELT(x, 0));
     size_t str_len = strlen(xx);
@@ -181,42 +181,6 @@ SEXP glue(SEXP x, SEXP env)
             state = prev_state;
             break;
 
-        case SINGLE_QUOTE:
-            if (xx[i] == '\\')
-            {
-                prev_state = SINGLE_QUOTE;
-                state = ESCAPE;
-            }
-            else if (xx[i] == '\'')
-            {
-                state = DELIM;
-            }
-            break;
-
-        case DOUBLE_QUOTE:
-            if (xx[i] == '\\')
-            {
-                prev_state = DOUBLE_QUOTE;
-                state = ESCAPE;
-            }
-            else if (xx[i] == '\"')
-            {
-                state = DELIM;
-            }
-            break;
-
-        case BACKTICK:
-            if (xx[i] == '\\')
-            {
-                prev_state = BACKTICK;
-                state = ESCAPE;
-            }
-            else if (xx[i] == '`')
-            {
-                state = DELIM;
-            }
-            break;
-
         case DELIM:
             if (strncmp(&xx[i], DELIM_OPEN, 1) == 0)
             {
@@ -225,24 +189,6 @@ SEXP glue(SEXP x, SEXP env)
             else if (strncmp(&xx[i], DELIM_CLOSE, 1) == 0)
             {
                 --delim_level;
-            }
-            else
-            {
-
-                switch (xx[i])
-                {
-                    case '\'':
-                        state = SINGLE_QUOTE;
-                        break;
-
-                    case '"':
-                        state = DOUBLE_QUOTE;
-                        break;
-
-                    case '`':
-                        state = BACKTICK;
-                        break;
-                };
             }
 
             if (delim_level == 0)
@@ -282,18 +228,6 @@ SEXP glue(SEXP x, SEXP env)
     if (state == DELIM)
     {
        Rf_error("Expecting '%s'", DELIM_CLOSE);
-    }
-    else if (state == SINGLE_QUOTE)
-    {
-        Rf_error("Unterminated quote (')");
-    }
-    else if (state == DOUBLE_QUOTE)
-    {
-        Rf_error("Unterminated quote (\")");
-    }
-    else if (state == BACKTICK)
-    {
-        Rf_error("Unterminated quote (`)");
     }
 
     out = resize(out, k);

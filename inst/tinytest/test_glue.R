@@ -17,11 +17,6 @@ expect_error(glue("x={x"), "Expecting '}'")
 # glue throws informative error if interpolating a function
 expect_error(glue("{cat}"), "cannot interpolate functions into strings.")
 
-# unterminated quotes are an error
-expect_error(glue("{this doesn\"t work}"), "Unterminated quote")
-expect_error(glue("{this doesn't work}"), "Unterminated quote")
-expect_error(glue("{this doesn`t work}"), "Unterminated quote")
-
 # glue does not execute code
 expect_error(glue("{1+1}"), "object '1\\+1' not found")
 
