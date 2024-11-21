@@ -11,9 +11,9 @@
 NOTE: This package is very much experimental in nature and should be
 treated as such until the 0.1.0 release.
 
-super is a fork / reimplementation of the
-[glue](https://glue.tidyverse.org) package with a focus on efficiency
-and simplicity at a cost of flexibility.
+super is a fork / reimplementation of the ‘glue’ package by Hester &
+Bryan <doi:10.32614/CRAN.package.glue> package but with a focus on
+efficiency and simplicity over flexibility.
 
 ## Installing the package
 
