@@ -50,6 +50,10 @@ expect_identical(glue("{foo}"), foo)
 "1 + 1" <- 5
 expect_identical(glue("{1 + 1}"), "5")
 
+# glue can handle interesting names without quoting
+`odd name\`` <- "indeed"
+expect_identical(glue("{odd name`}"), "indeed")
+
 # glue works with repeated expressions
 foo <- "foo"
 expect_identical(glue("{foo} {foo}"), paste(foo, foo))
