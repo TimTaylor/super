@@ -31,6 +31,7 @@ Description: An implementation of interpreted string literals. Based on the
   'glue' package by Hester & Bryan (2024) <doi:10.32614/CRAN.package.glue> but
   with a focus on efficiency and simplicity at a cost of flexibility.
 License: MIT + file LICENSE
+URL: https://timtaylor.github.io/super/
 BugReports: https://github.com/TimTaylor/super/issues
 Depends: 
     R (>= 3.6)
