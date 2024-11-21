@@ -171,11 +171,11 @@ behaviours) <code>.comment</code>, <code>.literal</code> and
 <span>    check   <span class="op">=</span> <span class="st">"identical"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Unit: relative</span></span>
-<span><span class="co">##     expr       min        lq      mean    median        uq        max neval</span></span>
-<span><span class="co">##  sprintf  1.000000  1.000000  1.000000  1.000000  1.000000  1.0000000   100</span></span>
-<span><span class="co">##   paste0  2.766187  2.433898  1.737385  1.595057  1.642582  0.2613623   100</span></span>
-<span><span class="co">##    super  9.225719  8.210923  6.352389  6.133080  5.821077  3.5326998   100</span></span>
-<span><span class="co">##     glue 81.644784 69.682109 47.335425 44.562738 40.809320 11.8554480   100</span></span></code></pre>
+<span><span class="co">##     expr       min        lq      mean    median        uq       max neval</span></span>
+<span><span class="co">##  sprintf  1.000000  1.000000  1.000000  1.000000  1.000000  1.000000   100</span></span>
+<span><span class="co">##   paste0  2.758780  2.541884  1.761623  1.695253  1.728351  0.332087   100</span></span>
+<span><span class="co">##    super  9.323475  8.653307  6.412287  6.372129  5.898411  3.811522   100</span></span>
+<span><span class="co">##     glue 82.464880 73.584770 48.689350 47.342011 42.191094 12.535015   100</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="data-frame-input">Data frame input<a class="anchor" aria-label="anchor" href="#data-frame-input"></a>
@@ -194,9 +194,9 @@ behaviours) <code>.comment</code>, <code>.literal</code> and
 <pre><code><span><span class="co">## Unit: relative</span></span>
 <span><span class="co">##     expr       min        lq      mean    median        uq       max neval</span></span>
 <span><span class="co">##  sprintf  1.000000  1.000000  1.000000  1.000000  1.000000  1.000000   100</span></span>
-<span><span class="co">##   paste0  1.637513  1.580780  1.537955  1.536265  1.429520  3.451325   100</span></span>
-<span><span class="co">##    super  2.895340  2.851802  2.779678  2.933439  2.596622  2.571657   100</span></span>
-<span><span class="co">##     glue 19.566221 18.427588 16.571282 16.808112 14.705375 15.723722   100</span></span></code></pre>
+<span><span class="co">##   paste0  1.622080  1.596172  1.580034  1.544289  1.436293  3.779810   100</span></span>
+<span><span class="co">##    super  2.874946  2.844049  2.699219  2.900861  2.532850  2.499937   100</span></span>
+<span><span class="co">##     glue 19.457421 18.498652 16.639986 16.971369 14.715558 17.498730   100</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="trimmed-output-1">Trimmed output<a class="anchor" aria-label="anchor" href="#trimmed-output-1"></a>
@@ -217,9 +217,9 @@ behaviours) <code>.comment</code>, <code>.literal</code> and
 <span>    check   <span class="op">=</span> <span class="st">"identical"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Unit: relative</span></span>
-<span><span class="co">##   expr      min       lq     mean   median       uq      max neval</span></span>
-<span><span class="co">##  super 1.000000 1.000000 1.000000 1.000000 1.000000 1.000000   100</span></span>
-<span><span class="co">##   glue 3.826451 3.737451 3.561476 3.599441 3.593523 1.766865   100</span></span></code></pre>
+<span><span class="co">##   expr      min       lq     mean   median      uq      max neval</span></span>
+<span><span class="co">##  super 1.000000 1.000000 1.000000 1.000000 1.00000 1.000000   100</span></span>
+<span><span class="co">##   glue 3.810861 3.695453 3.556358 3.591789 3.57389 1.689365   100</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="vectorized-performance">Vectorized performance<a class="anchor" aria-label="anchor" href="#vectorized-performance"></a>
@@ -239,11 +239,11 @@ convergence observed below.</p>
 <span>    check   <span class="op">=</span> <span class="st">"identical"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Unit: relative</span></span>
-<span><span class="co">##     expr      min       lq      mean   median       uq       max neval</span></span>
-<span><span class="co">##  sprintf 1.492140 1.480040 1.5310999 1.533847 1.591611 1.3594720   100</span></span>
-<span><span class="co">##   paste0 1.000000 1.000000 1.0000000 1.000000 1.000000 1.0000000   100</span></span>
-<span><span class="co">##    super 1.017640 1.003179 0.9997333 1.008793 1.002130 0.6851493   100</span></span>
-<span><span class="co">##     glue 1.086468 1.055965 1.0667281 1.046592 1.056222 0.9904715   100</span></span></code></pre>
+<span><span class="co">##     expr      min       lq     mean   median       uq      max neval</span></span>
+<span><span class="co">##  sprintf 1.483230 1.462301 1.456242 1.440844 1.437554 1.692944   100</span></span>
+<span><span class="co">##   paste0 1.000000 1.000000 1.000000 1.000000 1.000000 1.000000   100</span></span>
+<span><span class="co">##    super 1.001745 1.000072 1.004858 1.003037 1.001609 0.997367   100</span></span>
+<span><span class="co">##     glue 1.073850 1.058932 1.063580 1.045747 1.053739 1.053275   100</span></span></code></pre>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
