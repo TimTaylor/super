@@ -24,7 +24,7 @@ As of the 0.0.1 release it should be considered 'experimental'.
   option to change the delimiters from being a pair of braces (e.g. `{name}`).
 
 - Embraced inputs are always looked up in the provided environment (akin to
-  calling [get()]) and are not evaluated. This is similar to `glue::glue_safe()`
+  calling `get()`) and are not evaluated. This is similar to `glue::glue_safe()`
   and `glue::glue_data_safe()` but note that this is not the default behaviour
   of `glue::glue()`.
   
@@ -157,6 +157,9 @@ microbenchmark(
 ```
 
 ### Vectorized performance
+For larger input with both `glue::glue()` and `super::glue()`, the performance
+becomes dominated by the internally constructed call to `paste0()`, hence the
+convergence observed below.
 
 ```{r}
 #| print = xfun:::record_print.default
