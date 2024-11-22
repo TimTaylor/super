@@ -7,7 +7,7 @@ output:
         
 vignette: >
   %\VignetteEngine{litedown::vignette}
-  %\VignetteIndexEntry{ympes}
+  %\VignetteIndexEntry{super}
   %\VignetteEncoding{UTF-8}
   %\VignetteDepends{microbenchmark, glue}
 ---

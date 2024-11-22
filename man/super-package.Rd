@@ -11,6 +11,7 @@ An implementation of interpreted string literals. Based on the 'glue' package by
 \seealso{
 Useful links:
 \itemize{
+  \item \url{https://timtaylor.github.io/super/}
   \item Report bugs at \url{https://github.com/TimTaylor/super/issues}
 }
 
