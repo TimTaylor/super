@@ -1,0 +1,175 @@
+---
+title: "super"
+output:
+    litedown::html_format:
+        options:
+            embed_resources: ["all"]
+        
+vignette: >
+  %\VignetteEngine{litedown::vignette}
+  %\VignetteIndexEntry{super}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteDepends{microbenchmark, glue}
+---
+
+super is a fork / reimplementation of the [glue](https://glue.tidyverse.org)
+package with a focus on efficiency and simplicity at a cost of flexibility.
+
+As of the 0.0.1 release it should be considered 'experimental'.
+
+## Differences from glue
+
+- `super::glue()` takes only two arguments: A character string that is used as 
+  a template and an environment to look up the embraced inputs. There is no
+  option to change the delimiters from being a pair of braces (e.g. `{name}`).
+
+- Embraced inputs are always looked up in the provided environment (akin to
+  calling `get()`) and are not evaluated. This is similar to `glue::glue_safe()`
+  and `glue::glue_data_safe()` but note that this is not the default behaviour
+  of `glue::glue()`.
+  
+- `super::glue()` does not trim inputs. Instead this is done by either the
+  function `super::glut()` or explicitly by `glue(trim(x))`.
+  
+- `super::glue()` returns an unclassed character vector whereas `glue::glue()`
+  returns a `<glue>` object and provides a variety of methods to work on that
+  object.
+  
+- At present, `super::glue()` does not provide any allowance for different
+  handling of `NA` and `NULL` values, instead following the behaviour of
+  `paste()`.
+  
+- Recycling of embraced arguments currently follows standard R recycling rules
+  where the arguments will be recycled to the length of the longest one.
+  
+- `glue::glue()` arguments (and their associated behaviours) `.comment`,
+  `.literal` and `.transformer` are not implemented.
+  
+## Examples
+
+```{r}
+library(super)
+```
+
+### Simple concatenation
+
+```{r}
+bar <- "baz"
+glue("foo{bar}")
+```
+
+### list-like input
+
+```{r}
+dat <- head(cbind(car = rownames(mtcars), mtcars))
+glue("{car} does {mpg} mpg.", dat)
+```
+
+### Trimmed output
+```{r}
+name <- "Fred"
+age <- 50
+anniversary <- as.Date("1991-10-12")
+out <- glut("
+    My name is {name},
+    my age next year is {age},
+    my anniversary is {anniversary}.
+")
+cat(out)
+```
+
+
+### Partially vectorised
+
+Over embraced arguments
+```{r}
+head(glue("Item {LETTERS}"))
+```
+
+But not over input strings (yet)
+
+```{r}
+tryCatch(
+    glue(letters),
+    error = function(e) conditionMessage(e)
+)
+```
+
+
+## Relative timing benchmarks
+
+```{r}
+library(microbenchmark)
+```
+
+### Simple concatenation
+
+```{r}
+#| print = xfun:::record_print.default
+bar <- "baz"
+bob <- 20
+
+microbenchmark(
+    sprintf    = sprintf("foo%s %d", bar, bob),
+    paste0     = paste0("foo", bar, " ", bob),
+    super   = super::glue("foo{bar} {bob}"),
+    glue    = as.character(glue::glue_safe("foo{bar} {bob}", .trim = FALSE)),
+    unit    = "relative",
+    check   = "identical"
+)
+```
+
+### Data frame input
+
+```{r}
+#| print = xfun:::record_print.default
+dat <- head(cbind(car = rownames(mtcars), mtcars))
+
+microbenchmark(
+    sprintf = with(dat, sprintf("%s does %.3g mpg.", car, mpg)),
+    paste0  = with(dat, paste(car, "does", mpg, "mpg.")),
+    super   = super::glue("{car} does {mpg} mpg.", dat),
+    glue    = as.character(glue::glue_data(dat, "{car} does {mpg} mpg.")),
+    unit    = "relative",
+    check   = "identical"
+)
+```
+
+### Trimmed output
+
+```{r}
+#| print = xfun:::record_print.default
+
+microbenchmark(
+    super   = super::glut("
+                  My name is {name},
+                  my age next year is {age},
+                  my anniversary is {anniversary}.
+              "),
+    glue    = as.character(glue::glue("
+                  My name is {name},
+                  my age next year is {age},
+                  my anniversary is {anniversary}.
+              ")),
+    unit    = "relative",
+    check   = "identical"
+)
+```
+
+### Vectorized performance
+For larger input with both `glue::glue()` and `super::glue()`, the performance
+becomes dominated by the internally constructed call to `paste0()`, hence the
+convergence observed below.
+
+```{r}
+#| print = xfun:::record_print.default
+bar <- rep("baz", 1e5)
+microbenchmark(
+    sprintf    = sprintf("foo%s %d", bar, bob),
+    paste0     = paste0("foo", bar, " ", bob),
+    super   = super::glue("foo{bar} {bob}"),
+    glue    = as.character(glue::glue_safe("foo{bar} {bob}", .trim = FALSE)),
+    unit    = "relative",
+    check   = "identical"
+)
+```
