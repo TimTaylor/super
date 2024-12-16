@@ -28,14 +28,14 @@ revdep: pkg
 
 site: install
 	mkdir -p pkg/sitebuild
-	rm -rf pkg/sitebuild/* site
+	rm -rf pkg/sitebuild/* docs
 	cp -r pkg/site/* pkg/sitebuild/
 	cd pkg/sitebuild; Rscript -e "litedown::fuse('_footer.Rmd', '.md')"
 	cd pkg/sitebuild; Rscript -e "litedown::fuse_site()"
 	cd pkg/sitebuild; rm -f *.Rmd *.yml _*
-	cp -r pkg/sitebuild site
+	cp -r pkg/sitebuild docs
 	rm -rf pkg/sitebuild
-	xdg-open site/index.html
+	xdg-open docs/index.html
 
 clean:
 	rm -rf *.Rcheck
