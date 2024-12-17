@@ -1,3 +1,5 @@
+# super (development version)
+
 # super 0.0.4
 
 * Correct `VignetteIndexEntry`.
