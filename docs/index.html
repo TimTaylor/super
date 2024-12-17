@@ -34,7 +34,7 @@ nav>p:last-child{border-bottom:1px dashed #666}footer{border-top:1px dashed #666
 <a href="news.html">News</a></p></nav>
 <div class="frontmatter">
 <div class="title"><h1>super: Interpreted String Literals</h1></div>
-<div class="date"><h3>2024-12-16</h3></div>
+<div class="date"><h3>2024-12-17</h3></div>
 </div>
 <div class="body">
 <div id="TOC">
@@ -91,15 +91,12 @@ tinytest</td>
 <td>Tim Taylor <a href="https://orcid.org/0000-0002-8587-7113"><img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxOS4xLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiDQoJIHZpZXdCb3g9IjAgMCAyNTYgMjU2IiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCAyNTYgMjU2OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+DQo8c3R5bGUgdHlwZT0idGV4dC9jc3MiPg0KCS5zdDB7ZmlsbDojQTZDRTM5O30NCgkuc3Qxe2ZpbGw6I0ZGRkZGRjt9DQo8L3N0eWxlPg0KPHBhdGggY2xhc3M9InN0MCIgZD0iTTI1NiwxMjhjMCw3MC43LTU3LjMsMTI4LTEyOCwxMjhDNTcuMywyNTYsMCwxOTguNywwLDEyOEMwLDU3LjMsNTcuMywwLDEyOCwwQzE5OC43LDAsMjU2LDU3LjMsMjU2LDEyOHoiLz4NCjxnPg0KCTxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik04Ni4zLDE4Ni4ySDcwLjlWNzkuMWgxNS40djQ4LjRWMTg2LjJ6Ii8+DQoJPHBhdGggY2xhc3M9InN0MSIgZD0iTTEwOC45LDc5LjFoNDEuNmMzOS42LDAsNTcsMjguMyw1Nyw1My42YzAsMjcuNS0yMS41LDUzLjYtNTYuOCw1My42aC00MS44Vjc5LjF6IE0xMjQuMywxNzIuNGgyNC41DQoJCWMzNC45LDAsNDIuOS0yNi41LDQyLjktMzkuN2MwLTIxLjUtMTMuNy0zOS43LTQzLjctMzkuN2gtMjMuN1YxNzIuNHoiLz4NCgk8cGF0aCBjbGFzcz0ic3QxIiBkPSJNODguNyw1Ni44YzAsNS41LTQuNSwxMC4xLTEwLjEsMTAuMWMtNS42LDAtMTAuMS00LjYtMTAuMS0xMC4xYzAtNS42LDQuNS0xMC4xLDEwLjEtMTAuMQ0KCQlDODQuMiw0Ni43LDg4LjcsNTEuMyw4OC43LDU2Ljh6Ii8+DQo8L2c+DQo8L3N2Zz4=" alt="ORCID iD" class="orcid" /></a> [aut, cre], Jim Hester <a href="https://orcid.org/0000-0002-2739-7082"><img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxOS4xLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiDQoJIHZpZXdCb3g9IjAgMCAyNTYgMjU2IiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCAyNTYgMjU2OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+DQo8c3R5bGUgdHlwZT0idGV4dC9jc3MiPg0KCS5zdDB7ZmlsbDojQTZDRTM5O30NCgkuc3Qxe2ZpbGw6I0ZGRkZGRjt9DQo8L3N0eWxlPg0KPHBhdGggY2xhc3M9InN0MCIgZD0iTTI1NiwxMjhjMCw3MC43LTU3LjMsMTI4LTEyOCwxMjhDNTcuMywyNTYsMCwxOTguNywwLDEyOEMwLDU3LjMsNTcuMywwLDEyOCwwQzE5OC43LDAsMjU2LDU3LjMsMjU2LDEyOHoiLz4NCjxnPg0KCTxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik04Ni4zLDE4Ni4ySDcwLjlWNzkuMWgxNS40djQ4LjRWMTg2LjJ6Ii8+DQoJPHBhdGggY2xhc3M9InN0MSIgZD0iTTEwOC45LDc5LjFoNDEuNmMzOS42LDAsNTcsMjguMyw1Nyw1My42YzAsMjcuNS0yMS41LDUzLjYtNTYuOCw1My42aC00MS44Vjc5LjF6IE0xMjQuMywxNzIuNGgyNC41DQoJCWMzNC45LDAsNDIuOS0yNi41LDQyLjktMzkuN2MwLTIxLjUtMTMuNy0zOS43LTQzLjctMzkuN2gtMjMuN1YxNzIuNHoiLz4NCgk8cGF0aCBjbGFzcz0ic3QxIiBkPSJNODguNyw1Ni44YzAsNS41LTQuNSwxMC4xLTEwLjEsMTAuMWMtNS42LDAtMTAuMS00LjYtMTAuMS0xMC4xYzAtNS42LDQuNS0xMC4xLDEwLjEtMTAuMQ0KCQlDODQuMiw0Ni43LDg4LjcsNTEuMyw4OC43LDU2Ljh6Ii8+DQo8L2c+DQo8L3N2Zz4=" alt="ORCID iD" class="orcid" /></a> [aut], Jennifer Bryan <a href="https://orcid.org/0000-0002-6983-2759"><img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxOS4xLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiDQoJIHZpZXdCb3g9IjAgMCAyNTYgMjU2IiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCAyNTYgMjU2OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+DQo8c3R5bGUgdHlwZT0idGV4dC9jc3MiPg0KCS5zdDB7ZmlsbDojQTZDRTM5O30NCgkuc3Qxe2ZpbGw6I0ZGRkZGRjt9DQo8L3N0eWxlPg0KPHBhdGggY2xhc3M9InN0MCIgZD0iTTI1NiwxMjhjMCw3MC43LTU3LjMsMTI4LTEyOCwxMjhDNTcuMywyNTYsMCwxOTguNywwLDEyOEMwLDU3LjMsNTcuMywwLDEyOCwwQzE5OC43LDAsMjU2LDU3LjMsMjU2LDEyOHoiLz4NCjxnPg0KCTxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik04Ni4zLDE4Ni4ySDcwLjlWNzkuMWgxNS40djQ4LjRWMTg2LjJ6Ii8+DQoJPHBhdGggY2xhc3M9InN0MSIgZD0iTTEwOC45LDc5LjFoNDEuNmMzOS42LDAsNTcsMjguMyw1Nyw1My42YzAsMjcuNS0yMS41LDUzLjYtNTYuOCw1My42aC00MS44Vjc5LjF6IE0xMjQuMywxNzIuNGgyNC41DQoJCWMzNC45LDAsNDIuOS0yNi41LDQyLjktMzkuN2MwLTIxLjUtMTMuNy0zOS43LTQzLjctMzkuN2gtMjMuN1YxNzIuNHoiLz4NCgk8cGF0aCBjbGFzcz0ic3QxIiBkPSJNODguNyw1Ni44YzAsNS41LTQuNSwxMC4xLTEwLjEsMTAuMWMtNS42LDAtMTAuMS00LjYtMTAuMS0xMC4xYzAtNS42LDQuNS0xMC4xLDEwLjEtMTAuMQ0KCQlDODQuMiw0Ni43LDg4LjcsNTEuMyw4OC43LDU2Ljh6Ii8+DQo8L2c+DQo8L3N2Zz4=" alt="ORCID iD" class="orcid" /></a> [aut], Posit Software, PBC  [cph, fnd]</td>
 </tr>
 </tbody></table>
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-<p>NOTE: This package is very much experimental in nature and should be
-treated as such until the 0.1.0 release.</p>
-<p>super is a fork / reimplementation of the
-<a href="https://glue.tidyverse.org">glue</a> package with a focus on efficiency
-and simplicity at a cost of flexibility.</p>
+<p>NOTE: This package is very much experimental in nature and should be treated as
+such until the 0.1.0 release.</p>
+<p>super is a fork / reimplementation of the <a href="https://glue.tidyverse.org">glue</a>
+package with a focus on efficiency and simplicity at a cost of flexibility.</p>
 <h2 id="sec:installing-the-package"><span class="section-number main-number">1</span> Installing the package</h2>
-<p>You can install the latest release of super from
-<a href="https://cran.r-project.org/">CRAN</a> with:</p>
+<p>You can install the latest release of super from <a href="https://cran.r-project.org/">CRAN</a> with:</p>
 <pre><code class="language-r">install.packages(&quot;super&quot;)
 </code></pre>
 <p>The development version can be installed from r-universe with:</p>
@@ -109,8 +106,8 @@ and simplicity at a cost of flexibility.</p>
 )
 </code></pre>
 <h2 id="sec:vignettes"><span class="section-number main-number">2</span> Vignettes</h2>
-<p>An brief overview of super is provided in the vignette distributed with
-the package:</p>
+<p>An brief overview of super is provided in the vignette distributed with the
+package:</p>
 <ul>
 <li><code>vignette(&quot;super&quot;, package = &quot;super&quot;)</code></li>
 </ul>
