@@ -1,6 +1,6 @@
-doc:
-	cd pkg; Rscript -e "litedown::fuse('README.Rmd', '.md')"
-	cp pkg/README.md README.md
+.PHONY: doc pkg install check cran test manual revdep site clean
+
+doc: pkg/README.md
 	R -s -e "roxygen2::roxygenize('pkg', load_code = roxygen2::load_pkgload)"
 
 pkg: doc
@@ -27,6 +27,13 @@ revdep: pkg
 	mkdir revdep
 	mv *.tar.gz revdep
 	R -s -e "out <- tools::check_packages_in_dir('revdep',reverse=list(which='most')); print(summary(out)); saveRDS(out, file='revdep/output.RDS')"
+
+pkg/README.md: pkg/README.Rmd
+	cd pkg; Rscript -e "litedown::fuse('README.Rmd', '.md')"
+
+README.md: pkg/README.md
+	cp pkg/README.md README.md
+
 
 site: install
 	mkdir -p pkg/sitebuild
