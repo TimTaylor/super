@@ -78,7 +78,6 @@ out <- glut("
 cat(out)
 ```
 
-
 ### Partially vectorised
 
 Over embraced arguments
@@ -94,7 +93,6 @@ tryCatch(
     error = function(e) conditionMessage(e)
 )
 ```
-
 
 ## Relative timing benchmarks
 
