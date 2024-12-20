@@ -51,3 +51,6 @@ clean:
 	rm -rf revdep
 	rm -f *.tar.gz
 	rm -f manual.pdf
+	rm -f pkg/src/*.o
+	rm -f pkg/src/*.so
+
