@@ -42,18 +42,8 @@
 #include <Rinternals.h>
 #include <Rversion.h>
 
-/*
- * Note: The code now relies on the delimiters being of length 1 and not identical:
- *       We can enforce the length restriction at compile time and do so below.
- *       The equality check is done visually (although with C23 we could maybe
- *       use a constrexpr). R test would alert us to this issue anyway.
- */
-
-#define DELIM_OPEN "{"
-#define DELIM_CLOSE "}"
-
-static_assert(sizeof(DELIM_OPEN) == sizeof(DELIM_CLOSE), "");
-static_assert(sizeof(DELIM_OPEN) == 2, "");
+#define DELIM_OPEN '{'
+#define DELIM_CLOSE '}'
 
 /*
  * Note: We use a static variable as the R_getVar function in 4.5.0 will error
@@ -106,8 +96,9 @@ static SEXP R_getVar(SEXP sym, SEXP rho, Rboolean inherits)
 #endif
 
 /*
- * Note: I added an additional PROTECT as I'm unsure if SET_VECTOR_ELT() could
- *       trigger gc. Need to look in to this at some point.
+ * Note: I added an additional PROTECT to the original implementation as I'm
+ * unsure if SET_VECTOR_ELT() could trigger gc. Need to look in to this at some
+ * point.
  */
 static SEXP set(SEXP x, int i, SEXP val) {
     int protected = 0;
@@ -155,10 +146,10 @@ SEXP glue(SEXP x, SEXP env)
         switch (state)
         {
             case TEXT:
-                if (strncmp(&xx[i], DELIM_OPEN, 1) == 0)
+                if (xx[i] == DELIM_OPEN)
                 {
                     /* check for open delim doubled */
-                    if (strncmp(&xx[i + 1], DELIM_OPEN, 1) == 0)
+                    if (xx[i + 1] == DELIM_OPEN)
                     {
                         i++;
                     }
@@ -170,7 +161,7 @@ SEXP glue(SEXP x, SEXP env)
                         break;
                     }
                 }
-                if (strncmp(&xx[i], DELIM_CLOSE, 1) == 0 && strncmp(&xx[i + 1], DELIM_CLOSE, 1) == 0)
+                if (xx[i] == DELIM_CLOSE && xx[i + 1] == DELIM_CLOSE)
                 {
                     i++;
                 }
@@ -182,11 +173,11 @@ SEXP glue(SEXP x, SEXP env)
             break;
 
         case DELIM:
-            if (strncmp(&xx[i], DELIM_OPEN, 1) == 0)
+            if (xx[i] == DELIM_OPEN)
             {
                 ++delim_level;
             }
-            else if (strncmp(&xx[i], DELIM_CLOSE, 1) == 0)
+            else if (xx[i] == DELIM_CLOSE)
             {
                 --delim_level;
             }
@@ -227,7 +218,7 @@ SEXP glue(SEXP x, SEXP env)
 
     if (state == DELIM)
     {
-       Rf_error("Expecting '%s'", DELIM_CLOSE);
+       Rf_error("Expecting '%c'", DELIM_CLOSE);
     }
 
     out = resize(out, k);
