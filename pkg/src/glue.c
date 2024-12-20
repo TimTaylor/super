@@ -1,41 +1,40 @@
 /* --------------------------------------------------------------------------
- * Forked from glue at:
- *
- * Version: 1.8.0.9000;
- * Commit: a3f80d678274ef634c10c2cb094c939b1543222a;
- * URL: https://github.com/tidyverse/glue/commit/a3f80d678274ef634c10c2cb094c939b1543222a
- *
- * -------------------------------------------------------------------------- */
+ Forked from glue at:
+
+ Version: 1.8.0.9000;
+ Commit: a3f80d678274ef634c10c2cb094c939b1543222a;
+ URL: https://github.com/tidyverse/glue/commit/a3f80d678274ef634c10c2cb094c939b1543222a
+
+-------------------------------------------------------------------------- */
 
 /* --------------------------------------------------------------------------
- * # MIT License
- *
- * Copyright (c) 2023 glue authors
- * Copyright (c) 2024 super authors
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- * -------------------------------------------------------------------------- */
+# MIT License
 
-#include <assert.h>    /* for static_assert */
+Copyright (c) 2023 glue authors
+Copyright (c) 2024 super authors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+-------------------------------------------------------------------------- */
+
 #include <stdbool.h>
 #include <stdlib.h>
-#include <string.h>  /* for strlen, strncmp */
+#include <string.h>  /* for strlen */
 
 #define R_NO_REMAP
 #include <R.h>
@@ -46,17 +45,17 @@
 #define DELIM_CLOSE '}'
 
 /*
- * Note: We use a static variable as the R_getVar function in 4.5.0 will error
- *       if it cannot find the variable in the environment. We must then use
- *       an on.exit function to clean up on error/user interrupt.
+ Note: We use a static variable as the R_getVar function in 4.5.0 will error
+       if it cannot find the variable in the environment. We must then use
+       an on.exit function to clean up on error/user interrupt.
  */
 static char* str;
 
 /*
- * Note: It looks like R 4.5.0 will gain a useful function R_getVar. This is a
- *       slight variation on that function that should keep things working in
- *       earlier releases. The only difference a user should see is a slight
- *       change in error messages.
+ Note: It looks like R 4.5.0 will gain a useful function R_getVar. This is a
+       slight variation on that function that should keep things working in
+       earlier releases. The only difference a user should see is a slight
+       change in error messages.
  */
 #if R_VERSION < R_Version(4, 5, 0)
 static SEXP R_getVar(SEXP sym, SEXP rho, Rboolean inherits)
@@ -96,9 +95,9 @@ static SEXP R_getVar(SEXP sym, SEXP rho, Rboolean inherits)
 #endif
 
 /*
- * Note: I added an additional PROTECT to the original implementation as I'm
- * unsure if SET_VECTOR_ELT() could trigger gc. Need to look in to this at some
- * point.
+ Note: I added an additional PROTECT to the original implementation as I'm
+ unsure if SET_VECTOR_ELT() could trigger gc. Need to look in to this at some
+ point.
  */
 static SEXP set(SEXP x, int i, SEXP val) {
     int protected = 0;
@@ -209,7 +208,8 @@ SEXP glue(SEXP x, SEXP env)
         };
     }
 
-    if (k == 0 || j > 0) {
+    if (k == 0 || j > 0)
+	{
         str[j] = '\0';
         SEXP str_ = PROTECT(Rf_ScalarString(Rf_mkCharLenCE(str, j, CE_UTF8)));
         REPROTECT(out = set(out, k++, str_), out_idx);
@@ -222,9 +222,7 @@ SEXP glue(SEXP x, SEXP env)
     }
 
     out = resize(out, k);
-
     UNPROTECT(1);
-
     return out;
 }
 

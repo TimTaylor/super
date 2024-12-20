@@ -46,13 +46,13 @@
 # -------------------------------------------------------------------------
 #' @export
 trim <- function(x) {
-    if (!is.character(x))
-        stop("`x` must be a character vector.")
+	if (!is.character(x))
+		stop("`x` must be a character vector.")
 
-    has_newline <- function(x) any(grepl("\\n", x))
+	has_newline <- function(x) any(grepl("\\n", x))
 
-    if (length(x) == 0 || !has_newline(x))
-        return(x)
+	if (length(x) == 0 || !has_newline(x))
+		return(x)
 
-    .Call(C_trim, x)
+	.Call(C_trim, x)
 }

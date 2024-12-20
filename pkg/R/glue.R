@@ -56,47 +56,47 @@
 #' @export
 glue <- function(x, env = parent.frame()) {
 
-    if (!is.character(x) || length(x) > 1)
-        stop("`x` must be a character vector of length <= 1.")
+	if (!is.character(x) || length(x) > 1)
+		stop("`x` must be a character vector of length <= 1.")
 
-    if (!length(x))
-        return (character(0L))
+	if (!length(x))
+		return (character(0L))
 
-    if (!is.environment(env)) {
-        if (!is.list(env))
-            stop("`env` must be an environment or list like object.")
-        env <- list2env(env)
-    }
+	if (!is.environment(env)) {
+		if (!is.list(env))
+			stop("`env` must be an environment or list like object.")
+		env <- list2env(env)
+	}
 
-    on.exit(.Call(C_glue_free))
-    res <- .Call(C_glue, x, env)
-    if (any(vapply(res, is.function, TRUE)))
-        stop("`glue()` cannot interpolate functions into strings.")
-    do.call(paste0, res)
+	on.exit(.Call(C_glue_free))
+	res <- .Call(C_glue, x, env)
+	if (any(vapply(res, is.function, TRUE)))
+		stop("`glue()` cannot interpolate functions into strings.")
+	do.call(paste0, res)
 }
 
 #' @rdname glue
 #' @export
 glut <- function(x, env = parent.frame()) {
 
-    if (!is.character(x) || length(x) > 1)
-        stop("`x` must be a character vector of length <= 1.")
+	if (!is.character(x) || length(x) > 1)
+		stop("`x` must be a character vector of length <= 1.")
 
-    if (!length(x))
-        return (character(0L))
+	if (!length(x))
+		return (character(0L))
 
-    if (!is.environment(env)) {
-        if (!is.list(env))
-            stop("`env` must be an environment or list like object.")
-        env <- list2env(env)
-    }
+	if (!is.environment(env)) {
+		if (!is.list(env))
+			stop("`env` must be an environment or list like object.")
+		env <- list2env(env)
+	}
 
-    x <- trim(x)
+	x <- trim(x)
 
-    on.exit(.Call(C_glue_free))
-    res <- .Call(C_glue, x, env)
-    if (any(vapply(res, is.function, TRUE)))
-        stop("`glue()` cannot interpolate functions into strings.")
-    do.call(paste0, res)
+	on.exit(.Call(C_glue_free))
+	res <- .Call(C_glue, x, env)
+	if (any(vapply(res, is.function, TRUE)))
+		stop("`glue()` cannot interpolate functions into strings.")
+	do.call(paste0, res)
 }
 
