@@ -1,5 +1,7 @@
 # super (development version)
 
+* Internal changes (non-user facing).
+
 # super 0.0.4
 
 * Correct `VignetteIndexEntry`.
