@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="generator" content="litedown 0.4.11">
+<meta name="generator" content="litedown 0.5">
 <title>super</title>
 <style type="text/css">
 body {
@@ -22,8 +22,8 @@ pre, img { max-width: 100%; }
 pre { white-space: pre-wrap; word-break: break-word; }
 pre code { display: block; padding: 1em; overflow-x: auto; }
 code { font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace; }
-:not(pre) > code, code[class], .box > .caption { background-color: #f8f8f8; }
-pre > code:is(:not([class]), .language-plain, .language-none), .box { background-color: inherit; border: 1px solid #eee; }
+:not(pre) > code, code[class], div > .caption { background-color: #f8f8f8; }
+pre > code:is(:not([class]), .language-plain, .language-none), .box, .figure, .table { background-color: inherit; border: 1px solid #eee; }
 pre > code {
   &.message { border-color: #9eeaf9; }
   &.warning { background: #fff3cd; border-color: #fff3cd; }
@@ -36,8 +36,8 @@ pre > code {
   border-left: 2px solid;
   &:hover { opacity: inherit; }
 }
-.box, table { margin: 1em auto; }
-.box > .caption { padding: 1px 1em; }
+.box, .figure, .table, table { margin: 1em auto; }
+div > .caption { padding: 1px 1em; }
 .figure { p:has(img), pre:has(svg) { text-align: center; } }
 .flex-col { display: flex; justify-content: space-between; }
 table {
@@ -102,7 +102,7 @@ section.footnotes {
 }
 </style>
 <style type="text/css">
-.token{&.comment{color:#007400}&.punctuation{color:#999}&.tag,&.selector{color:#aa0d91}&.boolean,&.number,&.constant,&.symbol{color:#1c00cf}&.property,&.attr-name,&.string,&.char,&.builtin{color:#c41a16}&.inserted{background-color:#ccffd8}&.deleted{background-color:#ffebe9}&.operator,&.entity,&.url,.language-css &.string,.style &.string{color:#9a6e3a}&.atrule,&.attr-value,&.keyword{color:#836c28}&.function,&.class-name{color:#dd4a68}&.regex,&.important,&.variable{color:#5c2699}&.important,&.bold{font-weight:700}&.italic{font-style:italic}}
+.token{&.comment{color:#007400}&.punctuation{color:#999}&.tag,&.selector{color:#aa0d91}&.boolean,&.number,&.constant,&.symbol{color:#1c00cf}&.property,&.attr-name,&.string,&.char,&.builtin{color:#c41a16}&.inserted{background:#ccffd8}&.deleted{background:#ffebe9}&.operator,&.entity,&.url,.language-css &.string,.style &.string{color:#9a6e3a}&.atrule,&.attr-value,&.keyword{color:#836c28}&.function,&.class-name{color:#dd4a68}&.regex,&.important,&.variable{color:#5c2699}&.important,&.bold{font-weight:700}&.italic{font-style:italic}}
 </style>
 </head>
 <body>
@@ -212,11 +212,11 @@ microbenchmark(
 )
 </code></pre>
 <pre><code>#&gt; Unit: relative
-#&gt;     expr       min        lq      mean    median       uq       max neval
-#&gt;  sprintf  1.000000  1.000000  1.000000  1.000000  1.00000  1.000000   100
-#&gt;   paste0  2.833333  2.515625  2.362900  2.400000  2.24359  1.587467   100
-#&gt;    super  9.425926  8.273438  7.516124  7.828571  7.24359  4.237598   100
-#&gt;     glue 74.185185 64.343750 57.197588 59.671429 54.55833 26.167102   100
+#&gt;     expr       min        lq      mean    median        uq        max neval
+#&gt;  sprintf  1.000000  1.000000  1.000000  1.000000  1.000000  1.0000000   100
+#&gt;   paste0  2.866290  2.569132  2.159127  2.329529  2.231865  0.2971673   100
+#&gt;    super  9.414313  8.375402  7.268404  7.667618  7.229275  3.5622662   100
+#&gt;     glue 75.150659 66.176849 54.693050 59.325250 54.804404 11.8180118   100
 </code></pre>
 <h3 id="sec:data-frame-input">Data frame input</h3>
 <pre><code class="language-r">dat &lt;- head(cbind(car = rownames(mtcars), mtcars))
@@ -233,9 +233,9 @@ microbenchmark(
 <pre><code>#&gt; Unit: relative
 #&gt;     expr       min        lq      mean    median        uq       max neval
 #&gt;  sprintf  1.000000  1.000000  1.000000  1.000000  1.000000  1.000000   100
-#&gt;   paste0  1.654655  1.612045  1.555024  1.574637  1.510353  1.019078   100
-#&gt;    super  2.774775  2.738095  2.710032  2.712021  2.607917  3.622855   100
-#&gt;     glue 17.606607 16.803922 15.857033 16.314399 15.365408 11.374844   100
+#&gt;   paste0  1.649578  1.578361  1.521773  1.543841  1.499143  1.391470   100
+#&gt;    super  2.797648  2.688480  2.664031  2.631524  2.577517  4.938053   100
+#&gt;     glue 17.433052 16.299423 15.545597 15.687109 14.964364 15.086037   100
 </code></pre>
 <h3 id="sec:trimmed-output_2">Trimmed output</h3>
 <pre><code class="language-r">microbenchmark(
@@ -256,7 +256,7 @@ microbenchmark(
 <pre><code>#&gt; Unit: relative
 #&gt;   expr      min       lq     mean   median       uq      max neval
 #&gt;  super 1.000000 1.000000 1.000000 1.000000 1.000000 1.000000   100
-#&gt;   glue 4.020874 3.923188 3.868621 3.801784 3.814149 4.868604   100
+#&gt;   glue 3.923181 3.873648 3.716813 3.764615 3.730457 1.699942   100
 </code></pre>
 <h3 id="sec:vectorized-performance">Vectorized performance</h3>
 <p>For larger input with both <code>glue::glue()</code> and <code>super::glue()</code>, the performance
@@ -273,11 +273,11 @@ microbenchmark(
 )
 </code></pre>
 <pre><code>#&gt; Unit: relative
-#&gt;     expr      min       lq      mean   median       uq       max neval
-#&gt;  sprintf 1.321005 1.247220 1.2454086 1.246144 1.238604 1.1692245   100
-#&gt;   paste0 1.000000 1.000000 1.0000000 1.000000 1.000000 1.0000000   100
-#&gt;    super 1.006109 1.001868 0.9973887 1.000418 1.000087 0.9893999   100
-#&gt;     glue 1.165415 1.134366 1.1559752 1.139774 1.180054 1.3851055   100
+#&gt;     expr      min        lq     mean   median       uq       max neval
+#&gt;  sprintf 1.339721 1.2750059 1.280832 1.281514 1.268931 1.0520881   100
+#&gt;   paste0 1.007447 0.9996978 1.005688 1.003862 1.001624 0.9811512   100
+#&gt;    super 1.000000 1.0000000 1.000000 1.000000 1.000000 1.0000000   100
+#&gt;     glue 1.161911 1.1459430 1.165390 1.147413 1.202649 0.9998095   100
 </code></pre>
 </div>
 <script>
