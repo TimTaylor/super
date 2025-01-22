@@ -1,3 +1,5 @@
+litedown::reactor(print = NA)
+
 library(super)
 
 bar <- "baz"

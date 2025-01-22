@@ -214,9 +214,9 @@ microbenchmark(
 <pre><code>#&gt; Unit: relative
 #&gt;     expr       min        lq      mean    median        uq        max neval
 #&gt;  sprintf  1.000000  1.000000  1.000000  1.000000  1.000000  1.0000000   100
-#&gt;   paste0  2.866290  2.569132  2.159127  2.329529  2.231865  0.2971673   100
-#&gt;    super  9.414313  8.375402  7.268404  7.667618  7.229275  3.5622662   100
-#&gt;     glue 75.150659 66.176849 54.693050 59.325250 54.804404 11.8180118   100
+#&gt;   paste0  2.800363  2.489264  2.293728  2.409907  2.264249  0.6535299   100
+#&gt;    super  9.163339  8.289877  8.033221  8.040201  7.520078  7.8797845   100
+#&gt;     glue 73.239564 64.307515 58.477014 61.292175 56.848446 24.3666005   100
 </code></pre>
 <h3 id="sec:data-frame-input">Data frame input</h3>
 <pre><code class="language-r">dat &lt;- head(cbind(car = rownames(mtcars), mtcars))
@@ -233,9 +233,9 @@ microbenchmark(
 <pre><code>#&gt; Unit: relative
 #&gt;     expr       min        lq      mean    median        uq       max neval
 #&gt;  sprintf  1.000000  1.000000  1.000000  1.000000  1.000000  1.000000   100
-#&gt;   paste0  1.649578  1.578361  1.521773  1.543841  1.499143  1.391470   100
-#&gt;    super  2.797648  2.688480  2.664031  2.631524  2.577517  4.938053   100
-#&gt;     glue 17.433052 16.299423 15.545597 15.687109 14.964364 15.086037   100
+#&gt;   paste0  1.636990  1.620579  1.593694  1.531487  1.471723  3.898963   100
+#&gt;    super  2.750899  2.725709  2.623961  2.629491  2.576084  1.992366   100
+#&gt;     glue 16.854017 16.569551 15.708306 15.801674 15.377666 16.849670   100
 </code></pre>
 <h3 id="sec:trimmed-output_2">Trimmed output</h3>
 <pre><code class="language-r">microbenchmark(
@@ -254,9 +254,9 @@ microbenchmark(
 )
 </code></pre>
 <pre><code>#&gt; Unit: relative
-#&gt;   expr      min       lq     mean   median       uq      max neval
-#&gt;  super 1.000000 1.000000 1.000000 1.000000 1.000000 1.000000   100
-#&gt;   glue 3.923181 3.873648 3.716813 3.764615 3.730457 1.699942   100
+#&gt;   expr      min       lq   mean  median       uq      max neval
+#&gt;  super 1.000000 1.000000 1.0000 1.00000 1.000000 1.000000   100
+#&gt;   glue 4.037399 3.861666 3.8679 3.83708 3.849811 5.085667   100
 </code></pre>
 <h3 id="sec:vectorized-performance">Vectorized performance</h3>
 <p>For larger input with both <code>glue::glue()</code> and <code>super::glue()</code>, the performance
@@ -273,11 +273,11 @@ microbenchmark(
 )
 </code></pre>
 <pre><code>#&gt; Unit: relative
-#&gt;     expr      min        lq     mean   median       uq       max neval
-#&gt;  sprintf 1.339721 1.2750059 1.280832 1.281514 1.268931 1.0520881   100
-#&gt;   paste0 1.007447 0.9996978 1.005688 1.003862 1.001624 0.9811512   100
-#&gt;    super 1.000000 1.0000000 1.000000 1.000000 1.000000 1.0000000   100
-#&gt;     glue 1.161911 1.1459430 1.165390 1.147413 1.202649 0.9998095   100
+#&gt;     expr      min       lq     mean   median       uq      max neval
+#&gt;  sprintf 1.271888 1.239862 1.233851 1.223334 1.227514 1.111398   100
+#&gt;   paste0 1.000000 1.000000 1.000000 1.000000 1.000000 1.000000   100
+#&gt;    super 1.011577 1.000141 1.009048 1.001633 1.002440 1.148967   100
+#&gt;     glue 1.065700 1.082413 1.107243 1.073834 1.127493 1.118066   100
 </code></pre>
 </div>
 <script>

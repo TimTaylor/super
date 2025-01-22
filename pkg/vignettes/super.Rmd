@@ -12,6 +12,10 @@ vignette: >
   %\VignetteDepends{microbenchmark, glue}
 ---
 
+```{r, include = FALSE}
+litedown::reactor(print = NA)
+```
+
 super is a fork / reimplementation of the [glue](https://glue.tidyverse.org)
 package with a focus on efficiency and simplicity at a cost of flexibility.
 
@@ -103,7 +107,6 @@ library(microbenchmark)
 ### Simple concatenation
 
 ```{r}
-#| print = xfun:::record_print.default
 bar <- "baz"
 bob <- 20
 
@@ -120,7 +123,6 @@ microbenchmark(
 ### Data frame input
 
 ```{r}
-#| print = xfun:::record_print.default
 dat <- head(cbind(car = rownames(mtcars), mtcars))
 
 microbenchmark(
@@ -136,8 +138,6 @@ microbenchmark(
 ### Trimmed output
 
 ```{r}
-#| print = xfun:::record_print.default
-
 microbenchmark(
     super   = super::glut("
                   My name is {name},
@@ -160,7 +160,6 @@ becomes dominated by the internally constructed call to `paste0()`, hence the
 convergence observed below.
 
 ```{r}
-#| print = xfun:::record_print.default
 bar <- rep("baz", 1e5)
 microbenchmark(
     sprintf    = sprintf("foo%s %d", bar, bob),
