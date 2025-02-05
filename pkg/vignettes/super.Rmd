@@ -2,8 +2,8 @@
 title: "super"
 output:
     html:
-        options:
-            embed_resources: ["all"]
+        meta:
+            css: ["default"]
         
 vignette: >
   %\VignetteEngine{litedown::vignette}
