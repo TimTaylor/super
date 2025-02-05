@@ -19,7 +19,7 @@ litedown::reactor(print = NA)
 super is a fork / reimplementation of the [glue](https://glue.tidyverse.org)
 package with a focus on efficiency and simplicity at a cost of flexibility.
 
-As of the 0.0.1 release it should be considered 'experimental'.
+Until the 0.1.0 release it should be considered 'experimental'.
 
 ## Differences from glue
 
