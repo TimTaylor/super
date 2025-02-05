@@ -11,7 +11,7 @@
 # MIT License
 
 Copyright (c) 2023 glue authors
-Copyright (c) 2024 super authors
+Copyright (c) 2024 - 2025 super authors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -94,20 +94,29 @@ static SEXP R_getVar(SEXP sym, SEXP rho, Rboolean inherits)
 #endif
 
 /*
- Note: I added an additional PROTECT to the original implementation as I'm
- unsure if SET_VECTOR_ELT() could trigger gc. Need to look in to this at some
- point.
+ Note: In the original implementation the 'while' was an 'if'. This was likely
+       fine as you should never be setting over the length by more than 1. That
+       said, I made the change to (a) be certain and (b) protect myself for
+       future changes.
  */
 static SEXP set(SEXP x, int i, SEXP val) {
-    int protected = 0;
+    Rboolean protected = FALSE;
     R_xlen_t len = Rf_xlength(x);
-    if (i >= len)
+    while (i >= len)
     {
         len *= 2;
-        x = PROTECT(Rf_xlengthgets(x, len)); protected++;
+        protected = TRUE;
     }
+
+    if (protected)
+    {
+        x = PROTECT(Rf_xlengthgets(x, len));
+        SET_VECTOR_ELT(x, i, val);
+        UNPROTECT(1);
+        return x;
+    }
+
     SET_VECTOR_ELT(x, i, val);
-    UNPROTECT(protected);
     return x;
 }
 
