@@ -1,4 +1,6 @@
-# super (development version)
+# super 0.0.5
+
+* No longer downloads css when building vignette.
 
 * Internal changes (non-user facing).
 
