@@ -20,10 +20,7 @@ cat(out)
 
 head(glue("Item {LETTERS}"))
 
-tryCatch(
-    glue(letters),
-    error = function(e) conditionMessage(e)
-)
+glue(letters)
 
 library(microbenchmark)
 

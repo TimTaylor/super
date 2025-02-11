@@ -186,12 +186,9 @@ cat(out)
 <pre><code>#&gt; [1] &quot;Item A&quot; &quot;Item B&quot; &quot;Item C&quot; &quot;Item D&quot; &quot;Item E&quot; &quot;Item F&quot;
 </code></pre>
 <p>But not over input strings (yet)</p>
-<pre><code class="language-r">tryCatch(
-    glue(letters),
-    error = function(e) conditionMessage(e)
-)
+<pre><code class="language-r">glue(letters)
 </code></pre>
-<pre><code>#&gt; [1] &quot;`x` must be a character vector of length &lt;= 1.&quot;
+<pre><code class="language-plain error">#&gt; `x` must be a character vector of length &lt;= 1.
 </code></pre>
 <h2 id="sec:relative-timing-benchmarks">Relative timing benchmarks</h2>
 <pre><code class="language-r">library(microbenchmark)
@@ -210,11 +207,11 @@ microbenchmark(
 )
 </code></pre>
 <pre><code>#&gt; Unit: relative
-#&gt;     expr       min        lq      mean    median        uq        max neval
-#&gt;  sprintf  1.000000  1.000000  1.000000  1.000000  1.000000  1.0000000   100
-#&gt;   paste0  2.745917  2.639935  2.064606  2.323261  2.151611  0.2488447   100
-#&gt;    super  8.963702  8.453355  7.025201  7.540408  7.062539  3.3680684   100
-#&gt;     glue 72.622505 67.392799 52.622394 58.669712 53.493367 10.7073706   100
+#&gt;     expr       min        lq      mean    median        uq       max neval
+#&gt;  sprintf  1.000000  1.000000  1.000000  1.000000  1.000000  1.000000   100
+#&gt;   paste0  2.744102  2.556260  2.385454  2.255191  2.144919  3.716691   100
+#&gt;    super  9.056261  8.272583  7.219189  7.233758  6.729405  4.870480   100
+#&gt;     glue 73.186933 65.297147 54.976178 55.973208 51.051714 20.928182   100
 </code></pre>
 <h3 id="sec:data-frame-input">Data frame input</h3>
 <pre><code class="language-r">dat &lt;- head(cbind(car = rownames(mtcars), mtcars))
@@ -231,9 +228,9 @@ microbenchmark(
 <pre><code>#&gt; Unit: relative
 #&gt;     expr       min        lq      mean    median        uq       max neval
 #&gt;  sprintf  1.000000  1.000000  1.000000  1.000000  1.000000  1.000000   100
-#&gt;   paste0  1.620574  1.584827  1.509596  1.521716  1.454070  1.141333   100
-#&gt;    super  2.749084  2.701276  2.605026  2.651200  2.546428  1.808994   100
-#&gt;     glue 17.040598 16.562168 15.864483 15.813326 15.035599 17.303315   100
+#&gt;   paste0  1.604422  1.554502  1.487889  1.481595  1.439779  1.519074   100
+#&gt;    super  2.717956  2.647756  2.609677  2.558538  2.491483  5.961243   100
+#&gt;     glue 17.170003 16.576945 15.515348 15.502045 14.870921 16.872639   100
 </code></pre>
 <h3 id="sec:trimmed-output_2">Trimmed output</h3>
 <pre><code class="language-r">microbenchmark(
@@ -252,9 +249,9 @@ microbenchmark(
 )
 </code></pre>
 <pre><code>#&gt; Unit: relative
-#&gt;   expr      min       lq     mean   median       uq      max neval
-#&gt;  super 1.000000 1.000000 1.000000 1.000000 1.000000 1.000000   100
-#&gt;   glue 3.955082 3.861097 3.816218 3.726529 3.730558 5.235881   100
+#&gt;   expr     min       lq   mean   median       uq     max neval
+#&gt;  super 1.00000 1.000000 1.0000 1.000000 1.000000 1.00000   100
+#&gt;   glue 3.97386 3.892882 3.7491 3.844322 3.833781 1.50371   100
 </code></pre>
 <h3 id="sec:vectorized-performance">Vectorized performance</h3>
 <p>For larger input with both <code>glue::glue()</code> and <code>super::glue()</code>, the performance
@@ -271,11 +268,11 @@ microbenchmark(
 )
 </code></pre>
 <pre><code>#&gt; Unit: relative
-#&gt;     expr      min        lq     mean   median       uq      max neval
-#&gt;  sprintf 1.283467 1.2520543 1.219982 1.213006 1.212404 1.125020   100
-#&gt;   paste0 1.021624 0.9978619 1.003918 1.009085 1.021189 0.799293   100
-#&gt;    super 1.000000 1.0000000 1.000000 1.000000 1.000000 1.000000   100
-#&gt;     glue 1.082363 1.0716771 1.098714 1.079978 1.145627 1.052700   100
+#&gt;     expr      min       lq     mean   median       uq       max neval
+#&gt;  sprintf 1.304005 1.276811 1.254459 1.243415 1.243739 1.2410410   100
+#&gt;   paste0 1.016776 1.012420 1.007998 1.002140 1.014574 0.9763665   100
+#&gt;    super 1.000000 1.000000 1.000000 1.000000 1.000000 1.0000000   100
+#&gt;     glue 1.170961 1.173403 1.164921 1.154746 1.159817 1.1573148   100
 </code></pre>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" defer></script>

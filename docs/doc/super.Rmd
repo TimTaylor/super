@@ -91,11 +91,8 @@ head(glue("Item {LETTERS}"))
 
 But not over input strings (yet)
 
-```{r}
-tryCatch(
-    glue(letters),
-    error = function(e) conditionMessage(e)
-)
+```{r, error=TRUE}
+glue(letters)
 ```
 
 ## Relative timing benchmarks
